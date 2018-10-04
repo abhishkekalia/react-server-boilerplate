@@ -1,0 +1,106 @@
+import React, { Component } from 'react';
+import { withRouter } from "react-router-dom";
+import { connect } from "react-redux";
+import Toggle from 'react-toggle';
+import Home from './Home';
+import swal from 'sweetalert';
+import user from '../reducers/user';
+import * as actions from '../actions';
+
+
+class  extends Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            search: "",
+            filteredData: []
+
+        };
+    }
+
+
+    updateSearch(event) {
+        document.getElementById("myDropdowna").classList.toggle("show");
+        this.setState({
+            search: event.target.value.substr(0, 20)
+        })
+    }
+
+    // selectData(firstname){
+    //     this.setState({
+    //         search: 
+    //     })
+
+    // }
+
+    render() {
+
+        console.log(this.props.show)
+        console.log(this.props.dataTofilter)
+
+        let filteredData = this.props.dataTofilter.filter(
+            (data) => {
+                return data.firstname.toLowerCase().search(this.state.search.toLowerCase()) !== -1;
+            }
+
+        )
+        console.log(filteredData)
+
+
+        return (
+            <div>
+                {(this.props.show == true) ? (
+                    <div id="filterBlock" className="filter-block animated fadeInDown">
+                        <form>
+                            <div className="row">
+                                <div className="col-12">
+                                    <div className="form-group row">
+                                        <div className="col-3">
+
+                                            <label>First Name</label>
+                                            <input type="text" className="form-control form-control-lg" placeholder="Enter" id="myInput" value={this.state.search} onChange={this.updateSearch.bind(this)} />
+                                            <div id="myDropdowna" className="form-control form-control-lg">
+                                                {
+                                                    filteredData.map((data, Key) => {
+                                                        return <a key={Key}>{data.firstname}</a>
+                                                    }
+                                                    )
+                                                }
+
+                                            </div>
+                                        </div>
+                                        <div className="col-3">
+                                            <label>Last Name</label>
+                                            <input type="text" className="form-control form-control-lg" placeholder="Search" />
+                                        </div>
+                                        <div className="col-3">
+                                            <label>Email</label>
+                                            <input type="text" className="form-control form-control-lg" placeholder="Email" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="row">
+                                <div className="col-12 button-continer" style={{ marginBottom: 20 }}>
+                                    <button type="submit" className="btn btn-primary pull-right">Apply Filter</button>
+                                    <button type="button" className="btn btn-warning pull-right">Reset Filter</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>) : (<div> </div>)
+                }
+            </div>
+
+        );
+    }
+}
+
+
+const mapStateToProps = state => ({
+    userEditData: state.admin.editUser,
+
+});
+
+
+export default withRouter(connect(mapStateToProps, actions)());
